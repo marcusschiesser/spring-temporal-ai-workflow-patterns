@@ -60,11 +60,20 @@
     }
 
     .subhead {
-      margin: 14px 0 28px;
+      margin: 14px 0 20px;
       max-width: 42rem;
       color: var(--muted);
       font-size: 15px;
       line-height: 1.6;
+    }
+
+    .pattern-note {
+      margin: 0 0 28px;
+      max-width: 44rem;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+      min-height: 48px;
     }
 
     .controls {
@@ -175,9 +184,12 @@
 <body>
   <main class="shell">
     <p class="eyebrow">Spring AI + Temporal</p>
-    <h1>Workflow Patterns</h1>
+    <h1>AI Workflow Patterns</h1>
     <p class="subhead">
-      Choose a workflow pattern, click Run, and this page will start it with sample input. After it starts, you will get a direct link to the workflow run in Temporal UI plus a status endpoint for the API response.
+      Choose a workflow pattern, click Run, and this page will start it with sample input. After it starts, you will get a direct link to the workflow run in Temporal UI.
+    </p>
+    <p id="patternNote" class="pattern-note">
+      Sequential processing runs a fixed chain of steps where each result becomes the input to the next step.
     </p>
 
     <div class="controls">
@@ -197,12 +209,27 @@
   <script>
     const runButton = document.getElementById("runButton");
     const patternSelect = document.getElementById("pattern");
+    const patternNote = document.getElementById("patternNote");
     const result = document.getElementById("result");
+    const patternDescriptions = {
+      sequential: "Sequential processing runs a fixed chain of steps where each result becomes the input to the next step.",
+      routing: "Routing starts with classification, then chooses the next model, prompt, or path based on the result.",
+      parallel: "Parallel processing runs independent tasks at the same time and combines the results afterward.",
+      evaluator: "Evaluator-optimizer generates a result, scores it, and improves it iteratively until it passes a quality threshold or reaches a limit.",
+      orchestrator: "Orchestrator-worker uses a planner to break work into subtasks and specialized workers to execute each one."
+    };
 
     function showResult(html, isError = false) {
       result.className = "result visible" + (isError ? " error" : "");
       result.innerHTML = html;
     }
+
+    function updatePatternNote() {
+      patternNote.textContent = patternDescriptions[patternSelect.value];
+    }
+
+    patternSelect.addEventListener("change", updatePatternNote);
+    updatePatternNote();
 
     runButton.addEventListener("click", async () => {
       const pattern = patternSelect.value;
