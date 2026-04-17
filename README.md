@@ -11,11 +11,11 @@ Spring Boot port of the Vercel `ai-sdk-workflow-patterns` example using:
 
 The app implements five workflow patterns:
 
-- Sequential processing: fixed ordered steps where one output feeds the next
-- Parallel processing: independent tasks run at the same time and are aggregated afterward
-- Routing: an initial classification step chooses the next model, prompt, or path
-- Evaluator-optimizer: a result is generated, evaluated, and improved until it passes a threshold or reaches a limit
-- Orchestrator-worker: a planner breaks work into subtasks and specialized workers execute them
+- [Sequential processing](src/main/java/com/example/ai/workflow/SequentialWorkflowImpl.java): fixed ordered steps where one output feeds the next
+- [Parallel processing](src/main/java/com/example/ai/workflow/ParallelWorkflowImpl.java): independent tasks run at the same time and are aggregated afterward
+- [Routing](src/main/java/com/example/ai/workflow/RoutingWorkflowImpl.java): an initial classification step chooses the next model, prompt, or path
+- [Evaluator-optimizer](src/main/java/com/example/ai/workflow/EvaluatorWorkflowImpl.java): a result is generated, evaluated, and improved until it passes a threshold or reaches a limit
+- [Orchestrator-worker](src/main/java/com/example/ai/workflow/OrchestratorWorkflowImpl.java): a planner breaks work into subtasks and specialized workers execute them
 
 The browser UI at `http://localhost:8081/` lets you:
 
@@ -83,7 +83,7 @@ Primary environment variables:
 - `APP_AI_MODEL_DEFAULT`
 - `APP_AI_MODEL_STRONG`
 
-Defaults are defined in [src/main/resources/application.yml](/Users/marcus/code/java/ai/src/main/resources/application.yml).
+Defaults are defined in [src/main/resources/application.yml](src/main/resources/application.yml).
 
 ## API
 
@@ -127,4 +127,4 @@ Key areas:
 
 ## License
 
-MIT. See [LICENSE](/Users/marcus/code/java/ai/LICENSE).
+MIT. See [LICENSE](LICENSE).
