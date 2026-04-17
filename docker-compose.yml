@@ -1,0 +1,82 @@
+services:
+  postgresql:
+    image: postgres:16
+    container_name: ai-postgresql
+    environment:
+      POSTGRES_DB: temporal
+      POSTGRES_USER: temporal
+      POSTGRES_PASSWORD: temporal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U temporal -d temporal"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - ai-network
+
+  temporal:
+    image: temporalio/auto-setup:${TEMPORAL_VERSION:-1.28.4}
+    container_name: ai-temporal
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    environment:
+      DB: postgres12
+      DB_PORT: 5432
+      POSTGRES_USER: temporal
+      POSTGRES_PWD: temporal
+      POSTGRES_SEEDS: postgresql
+      DYNAMIC_CONFIG_FILE_PATH: config/dynamicconfig/development-sql.yaml
+      TEMPORAL_ADDRESS: temporal:7233
+      TEMPORAL_CLI_ADDRESS: temporal:7233
+    ports:
+      - "7233:7233"
+    volumes:
+      - ./dynamicconfig:/etc/temporal/config/dynamicconfig
+    networks:
+      - ai-network
+
+  temporal-ui:
+    image: temporalio/ui:${TEMPORAL_UI_VERSION:-2.48.3}
+    container_name: ai-temporal-ui
+    depends_on:
+      temporal:
+        condition: service_started
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
+      TEMPORAL_CORS_ORIGINS: http://localhost:8081
+    ports:
+      - "8080:8080"
+    networks:
+      - ai-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-app
+    depends_on:
+      temporal:
+        condition: service_started
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      TEMPORAL_TARGET: temporal:7233
+      TEMPORAL_NAMESPACE: default
+      TEMPORAL_TASK_QUEUE: ai-workflows
+      TEMPORAL_UI_BASE_URL: http://localhost:8080
+    ports:
+      - "8081:8080"
+    restart: on-failure
+    networks:
+      - ai-network
+
+networks:
+  ai-network:
+    driver: bridge
+
+volumes:
+  postgres-data:

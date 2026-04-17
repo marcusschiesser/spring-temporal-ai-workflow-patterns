@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: ai
+  ai:
+    openai:
+      api-key: ${SPRING_AI_OPENAI_API_KEY:${OPENAI_API_KEY:}}
+
+app:
+  temporal:
+    namespace: ${TEMPORAL_NAMESPACE:default}
+    task-queue: ${TEMPORAL_TASK_QUEUE:ai-workflows}
+    target: ${TEMPORAL_TARGET:127.0.0.1:7233}
+    ui-base-url: ${TEMPORAL_UI_BASE_URL:http://localhost:8080}
+    workers-enabled: ${TEMPORAL_WORKERS_ENABLED:true}
+  models:
+    small: ${APP_AI_MODEL_SMALL:gpt-4o-mini}
+    default-model: ${APP_AI_MODEL_DEFAULT:gpt-4o-mini}
+    strong: ${APP_AI_MODEL_STRONG:gpt-4o}
+  evaluator:
+    quality-threshold: ${APP_EVALUATOR_QUALITY_THRESHOLD:8}
+    max-iterations: ${APP_EVALUATOR_MAX_ITERATIONS:3}
